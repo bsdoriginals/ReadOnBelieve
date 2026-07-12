@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReadOnBelieve — Read the Whole Bible</title>
+<meta name="description" content="ReadOnBelieve is a free, simple place to read the entire Bible online — book by book, chapter by chapter, in the King James or World English translation.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23223347'/%3E%3Crect x='30' y='20' width='40' height='55' rx='2' fill='%23e4c374'/%3E%3Crect x='48' y='20' width='4' height='55' fill='%23223347'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to reading</a>
+
+<!-- ============ HEADER ============ -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#top" class="logo" aria-label="ReadOnBelieve home">
+      <svg class="logo-book" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path d="M3 5c3-1.5 6-1.5 9 0v14c-3-1.5-6-1.5-9 0z"/>
+        <path d="M21 5c-3-1.5-6-1.5-9 0v14c3-1.5 6-1.5 9 0z"/>
+      </svg>
+      <span>ReadOn<em>Believe</em></span>
+    </a>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#read">Read</a>
+      <a href="#jump">Jump To</a>
+      <a href="#bookmarks">Bookmarks</a>
+      <a href="#about">About</a>
+    </nav>
+
+    <button id="vigilToggle" class="vigil-toggle" type="button" aria-pressed="false">
+      <span class="vigil-icon" aria-hidden="true">☾</span>
+      <span class="vigil-label">Vigil Mode</span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <video class="hero-bg-video" autoplay muted loop playsinline preload="auto">
+      <source src="hero-bg.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-book" aria-hidden="true">
+      <div class="page-left"></div>
+      <div class="page-right"></div>
+      <div class="spine"></div>
+    </div>
+
+    <div class="hero-text">
+      <p class="eyebrow">Sixty-six books. One story.</p>
+      <h1>Read the Bible,<br>one page at a time.</h1>
+      <p class="hero-verse" id="verseOfDay">Loading today's verse…</p>
+
+      <div class="hero-actions">
+        <button id="continueBtn" class="btn btn-primary" type="button">Continue reading</button>
+        <a href="https://bucket.appilix.com/app-apk-b162a37946b147f0a3b84c407c20ea8f-1783351649.apk"
+   class="btn btn-primary"
+   target="_blank"
+   rel="noopener">
+   📱 Download Android App
+        </a>
+        <a href="https://prayonbeleive.vercel.app/"
+       class="btn btn-primary"
+       target="_blank">
+       🙏 Pray Now
+        </a>
+        <a href="#read" class="btn btn-ghost">Browse all books</a>
+      </div>
+
+      <p class="reading-note">Text is loaded live from a free, public-domain Bible source, in the King James or World English translation — always the full, real text, never shortened.</p>
+    </div>
+  </section>
+
+  <!-- ============ JUMP TO A VERSE ============ -->
+  <section class="jump-section" id="jump">
+    <form id="jumpForm" class="jump-form">
+      <label for="jumpInput" class="visually-hidden">Jump to a passage</label>
+      <input type="text" id="jumpInput" placeholder="Jump to any passage — e.g. John 3:16, Psalm 23, Romans 8">
+      <button type="submit" class="btn btn-primary">Go</button>
+    </form>
+    <button id="randomBtn" class="link-btn" type="button">or open a random chapter</button>
+  </section>
+
+  <!-- ============ BOOK BROWSER ============ -->
+  <section class="books-section" id="read">
+    <div class="section-heading">
+      <p class="eyebrow">Browse</p>
+      <h2>Choose a book</h2>
+      <p class="section-sub">Tap a book, then a chapter, and it opens right here for you to read.</p>
+    </div>
+
+    <div class="testament-block">
+      <h3 class="testament-title">Old Testament</h3>
+      <div class="book-grid" id="otGrid"></div>
+    </div>
+
+    <div class="testament-block">
+      <h3 class="testament-title">New Testament</h3>
+      <div class="book-grid" id="ntGrid"></div>
+    </div>
+  </section>
+
+  <!-- ============ CHAPTER PICKER (shown after a book is chosen) ============ -->
+  <section class="chapter-picker" id="chapterPicker" hidden>
+    <div class="section-heading">
+      <p class="eyebrow" id="chapterBookLabel">Book</p>
+      <h2>Choose a chapter</h2>
+    </div>
+    <div class="chapter-grid" id="chapterGrid"></div>
+  </section>
+
+  <!-- ============ READER ============ -->
+  <section class="reader-section" id="reader" hidden>
+    <div class="reader-toolbar">
+      <button id="prevChapterBtn" class="tool-btn" type="button" aria-label="Previous chapter">&larr; Prev</button>
+
+      <div class="reader-heading">
+        <h2 id="readerTitle">Genesis 1</h2>
+        <select id="translationSelect" aria-label="Choose translation">
+          <option value="kjv">King James Version</option>
+          <option value="web">World English Bible</option>
+        </select>
+      </div>
+
+      <button id="nextChapterBtn" class="tool-btn" type="button" aria-label="Next chapter">Next &rarr;</button>
+    </div>
+
+    <div class="font-controls">
+      <span>Text size</span>
+      <button id="fontSmaller" class="tool-btn small" type="button" aria-label="Smaller text">A-</button>
+      <button id="fontLarger" class="tool-btn small" type="button" aria-label="Larger text">A+</button>
+    </div>
+
+    <div class="audio-controls" id="audioControls">
+      <button id="listenBtn" class="tool-btn small" type="button">🔊 Listen to this chapter</button>
+      <div id="audioPlayerWrap" class="audio-player-wrap" hidden>
+        <audio id="chapterAudio" controls preload="none"></audio>
+      </div>
+      <span id="audioStatus" class="audio-status" role="status" aria-live="polite"></span>
+    </div>
+
+    <div id="readerStatus" class="reader-status" role="status" aria-live="polite"></div>
+    <div id="readerText" class="reader-text"></div>
+  </section>
+
+  <!-- ============ VERSE ACTION POPOVER ============ -->
+  <dialog id="verseDialog" class="verse-dialog">
+    <form method="dialog" class="dialog-form">
+      <button type="submit" class="dialog-close" aria-label="Close">&times;</button>
+      <p class="dialog-eyebrow" id="verseDialogRef"></p>
+      <blockquote id="verseDialogText" class="dialog-text"></blockquote>
+
+      <label class="name-field">
+        Add a private note (optional)
+        <textarea id="verseNoteInput" rows="2" maxlength="400" placeholder="What does this verse mean to you today?"></textarea>
+      </label>
+
+      <div class="dialog-actions">
+        <button type="button" id="bookmarkBtn" class="btn btn-primary">Save bookmark</button>
+        <button type="button" id="copyVerseBtn" class="btn btn-ghost">Copy / Share</button>
+      </div>
+      <p class="dialog-confirm" id="verseDialogConfirm" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <!-- ============ BOOKMARKS ============ -->
+  <section class="bookmarks-section" id="bookmarks">
+    <div class="section-heading">
+      <p class="eyebrow">Saved for you</p>
+      <h2>My Bookmarks</h2>
+      <p class="section-sub">Saved only in this browser, on this device — nothing is uploaded anywhere.</p>
+    </div>
+    <div id="bookmarkList" class="bookmark-list"></div>
+    <p id="bookmarkEmpty" class="journal-empty">No bookmarks yet. Tap any verse while reading to save it here.</p>
+
+    <div class="streak-strip">
+      <div class="streak-item">
+        <span class="streak-number" id="streakDays">0</span>
+        <span class="streak-label">day streak of reading</span>
+      </div>
+      <div class="streak-item">
+        <span class="streak-number" id="chaptersReadCount">0</span>
+        <span class="streak-label">chapters opened</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="about-section" id="about">
+    <div class="about-inner">
+      <svg class="ichthys" viewBox="0 0 100 40" width="90" height="36" aria-hidden="true">
+        <path d="M2 20 C 30 -10, 70 -10, 98 20 C 70 50, 30 50, 2 20 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+      </svg>
+      <h2>Why this site exists</h2>
+      <p>ReadOnBelieve exists to make one thing simple: opening the Bible and actually reading it, without ads, distractions, or accounts. Every word of every chapter is the real, complete text — nothing is summarized or trimmed.</p>
+      <p>Your bookmarks and notes stay on your own device. There's no login because there's nothing to keep from you.</p>
+      <p class="verse-signoff">"Your word is a lamp to my feet and a light to my path." — Psalm 119:105</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-symbols" aria-hidden="true">
+    <span>✝</span><span>·</span><span>🕊</span><span>·</span><span>✝</span>
+  </div>
+  <p>Built in faith by Dilpreet · BSD Originals</p>
+  <p class="footer-small">A companion to PrayOnBelieve</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
